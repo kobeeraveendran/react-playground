@@ -12,25 +12,26 @@ function Square(props) {
     );
 }
 
-/*
-class Square extends React.Component {
+function calculateWinner(squares) {
+    const winningPositions = [
+        [0, 1, 2],      // horizontal wins
+        [3, 4, 5], 
+        [6, 7, 8], 
+        [0, 3, 6],      // vertical wins (transpose of horizontal wins matrix)
+        [1, 4, 7], 
+        [2, 5, 8], 
+        [0, 4, 8],      // diagonal wins 
+        [2, 4, 6]
+    ];
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: null,
-        };
-    }
-
-    render() {
-        return (
-            <button className="square" onClick= {() => this.props.onClick()}>
-                {this.props.value}
-            </button>
-        );
+    for (let line of winningPositions)
+    {   
+        if (squares[line[0]] && squares[line[0]] === squares[line[1]] && squares[line[1]] === squares[line[2]])
+        {
+            return squares[line[0]];
+        }
     }
 }
-*/
 
 class Board extends React.Component {
     
@@ -43,6 +44,11 @@ class Board extends React.Component {
 
     handleClick(i) {
         const squares = this.state.squares.slice();
+
+        if (calculateWinner(squares) || squares[i])
+        {
+            return;
+        }
 
         if (squares[i] == null) {
 
@@ -61,7 +67,20 @@ class Board extends React.Component {
     }
 
     render() {
-        const status = 'Next Player: ' + (turn % 2 === 0 ? 'X': 'O');
+
+        const winner = calculateWinner(this.state.squares);
+
+        let status;
+
+        if (winner)
+        {
+            status = 'Winner: ' + winner;
+        }
+
+        else
+        {
+            status = 'Next Player: ' + (turn % 2 === 0 ? 'X': 'O');
+        }
 
         return (
             <div>
